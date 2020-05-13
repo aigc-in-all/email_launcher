@@ -30,21 +30,15 @@ class _MyAppState extends State<MyApp> {
     super.dispose();
   }
 
-  void _launchEmail() {
+  void _launchEmail() async {
     List<String> to = _toController.text.split(',');
     List<String> cc = _ccController.text.split(',');
     List<String> bcc = _bccController.text.split(',');
     String subject = _subjectController.text;
     String body = _bodyController.text;
-    EmailLauncher.launch(Email(
-      to: to,
-      cc: cc,
-      bcc: bcc,
-      subject: subject,
-      body: body,
-    )).catchError((e) {
-      print(e);
-    });
+
+    Email email = Email(to: to, cc: cc, bcc: bcc, subject: subject, body: body);
+    await EmailLauncher.launch(email);
   }
 
   @override

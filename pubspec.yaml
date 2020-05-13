@@ -1,8 +1,7 @@
 name: email_launcher
 description: Flutter plugin for launching emails on mobile platforms. Support iOS and Android.
-version: 0.0.1
-author:
-homepage:
+version: 1.0.0
+homepage: https://github.com/heqingbao/email_launcher
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
