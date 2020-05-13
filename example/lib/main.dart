@@ -1,8 +1,5 @@
-import 'package:flutter/material.dart';
-import 'dart:async';
-
-import 'package:flutter/services.dart';
 import 'package:email_launcher/email_launcher.dart';
+import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
 
@@ -12,31 +9,41 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
+  final _toController = TextEditingController();
+  final _ccController = TextEditingController();
+  final _bccController = TextEditingController();
+  final _subjectController = TextEditingController();
+  final _bodyController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    initPlatformState();
   }
 
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      platformVersion = await EmailLauncher.platformVersion;
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
+  @override
+  void dispose() {
+    _toController.dispose();
+    _ccController.dispose();
+    _bccController.dispose();
+    _subjectController.dispose();
+    _bodyController.dispose();
+    super.dispose();
+  }
 
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _platformVersion = platformVersion;
+  void _launchEmail() {
+    List<String> to = _toController.text.split(',');
+    List<String> cc = _ccController.text.split(',');
+    List<String> bcc = _bccController.text.split(',');
+    String subject = _subjectController.text;
+    String body = _bodyController.text;
+    EmailLauncher.launch(Email(
+      to: to,
+      cc: cc,
+      bcc: bcc,
+      subject: subject,
+      body: body,
+    )).catchError((e) {
+      print(e);
     });
   }
 
@@ -47,8 +54,63 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+        body: Container(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 4.0),
+                child: TextField(
+                  controller: _toController,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black54)),
+                      hintText: 'Enter to'),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 4.0),
+                child: TextField(
+                  controller: _ccController,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black54)),
+                      hintText: 'Enter cc'),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 4.0),
+                child: TextField(
+                  controller: _bccController,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black54)),
+                      hintText: 'Enter bcc'),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 4.0),
+                child: TextField(
+                  controller: _subjectController,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black54)),
+                      hintText: 'Enter subject'),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 4.0),
+                child: TextField(
+                  controller: _bodyController,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black54)),
+                      hintText: 'Enter body'),
+                ),
+              ),
+              RaisedButton(onPressed: _launchEmail, child: Text('Launch Email'))
+            ],
+          ),
         ),
       ),
     );
