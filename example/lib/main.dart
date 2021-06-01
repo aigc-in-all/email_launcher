@@ -56,6 +56,7 @@ class _MyAppState extends State<MyApp> {
                 padding: EdgeInsets.symmetric(vertical: 4.0),
                 child: TextField(
                   controller: _toController,
+                  keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.black54)),
@@ -66,6 +67,7 @@ class _MyAppState extends State<MyApp> {
                 padding: EdgeInsets.symmetric(vertical: 4.0),
                 child: TextField(
                   controller: _ccController,
+                  keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.black54)),
@@ -76,6 +78,7 @@ class _MyAppState extends State<MyApp> {
                 padding: EdgeInsets.symmetric(vertical: 4.0),
                 child: TextField(
                   controller: _bccController,
+                  keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.black54)),
@@ -86,6 +89,7 @@ class _MyAppState extends State<MyApp> {
                 padding: EdgeInsets.symmetric(vertical: 4.0),
                 child: TextField(
                   controller: _subjectController,
+                  keyboardType: TextInputType.text,
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.black54)),
@@ -96,13 +100,15 @@ class _MyAppState extends State<MyApp> {
                 padding: EdgeInsets.symmetric(vertical: 4.0),
                 child: TextField(
                   controller: _bodyController,
+                  keyboardType: TextInputType.text,
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.black54)),
                       hintText: 'Enter body'),
                 ),
               ),
-              RaisedButton(onPressed: _launchEmail, child: Text('Launch Email'))
+              ElevatedButton(
+                  onPressed: _launchEmail, child: Text('Launch Email'))
             ],
           ),
         ),

@@ -3,7 +3,7 @@ package com.heqingbao.flutter.plugin.email_launcher
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.annotation.NonNull;
+import androidx.annotation.NonNull
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -20,12 +20,12 @@ private const val BODY = "body"
 /** EmailLauncherPlugin */
 public class EmailLauncherPlugin : FlutterPlugin, MethodCallHandler {
 
-    private lateinit var context: Context
+    private var context: Context? = null
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         val channel = MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "email_launcher")
-        context = flutterPluginBinding.applicationContext
         channel.setMethodCallHandler(this)
+        context = flutterPluginBinding.applicationContext
     }
 
     companion object {
@@ -52,44 +52,41 @@ public class EmailLauncherPlugin : FlutterPlugin, MethodCallHandler {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
 
         if (call.hasArgument(TO)) {
-            val to = call.argument<ArrayList<String>>(TO)
-            if (to != null) {
+            call.argument<ArrayList<String>>(TO)?.let { to ->
                 intent.putExtra(Intent.EXTRA_EMAIL, listArrayToArray(to))
             }
         }
 
         if (call.hasArgument(CC)) {
-            val cc = call.argument<ArrayList<String>>(CC)
-            if (cc != null) {
+            call.argument<ArrayList<String>>(CC)?.let { cc ->
                 intent.putExtra(Intent.EXTRA_CC, listArrayToArray(cc))
             }
         }
 
-      if (call.hasArgument(BCC)) {
-        val bcc = call.argument<ArrayList<String>>(BCC)
-        if (bcc != null) {
-          intent.putExtra(Intent.EXTRA_BCC, listArrayToArray(bcc))
+        if (call.hasArgument(BCC)) {
+            call.argument<ArrayList<String>>(BCC)?.let { bcc ->
+                intent.putExtra(Intent.EXTRA_BCC, listArrayToArray(bcc))
+            }
         }
-      }
 
         if (call.hasArgument(SUBJECT)) {
-            val subject = call.argument<String>(SUBJECT)
-            if (subject != null) {
+            call.argument<String>(SUBJECT)?.let { subject ->
                 intent.putExtra(Intent.EXTRA_SUBJECT, subject)
             }
         }
         if (call.hasArgument(BODY)) {
-            val body = call.argument<String>(BODY)
-            if (body != null) {
+            call.argument<String>(BODY)?.let { body ->
                 intent.putExtra(Intent.EXTRA_TEXT, body)
             }
         }
 
-        if (intent.resolveActivity(context.packageManager) != null) {
-            context.startActivity(intent)
-            result.success(true)
-        } else {
-            result.error("1", "No mail client or no mail configuration", null)
+        context?.let { ctx ->
+            if (intent.resolveActivity(ctx.packageManager) != null) {
+                ctx.startActivity(intent)
+                result.success(true)
+            } else {
+                result.error("1", "No mail client or no mail configuration", null)
+            }
         }
     }
 
