@@ -1,7 +1,10 @@
 import 'package:email_launcher/email_launcher.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  runApp(MyApp());
+}
 
 class MyApp extends StatefulWidget {
   @override
@@ -38,7 +41,13 @@ class _MyAppState extends State<MyApp> {
     String body = _bodyController.text;
 
     Email email = Email(to: to, cc: cc, bcc: bcc, subject: subject, body: body);
-    await EmailLauncher.launch(email);
+    EmailLauncher.launch(email).then((value) {
+      // success
+      print(value);
+    }).catchError((error) {
+      // has error
+      print(error);
+    });
   }
 
   @override
@@ -46,72 +55,42 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Plugin example app'),
+          title: const Text("Plugin example app"),
         ),
-        body: Container(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 4.0),
-                child: TextField(
-                  controller: _toController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black54)),
-                      hintText: 'Enter to'),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 4.0),
-                child: TextField(
-                  controller: _ccController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black54)),
-                      hintText: 'Enter cc'),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 4.0),
-                child: TextField(
-                  controller: _bccController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black54)),
-                      hintText: 'Enter bcc'),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 4.0),
-                child: TextField(
-                  controller: _subjectController,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black54)),
-                      hintText: 'Enter subject'),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 4.0),
-                child: TextField(
-                  controller: _bodyController,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black54)),
-                      hintText: 'Enter body'),
-                ),
-              ),
-              ElevatedButton(
-                  onPressed: _launchEmail, child: Text('Launch Email'))
-            ],
-          ),
+        body: ListView(
+          children: [
+            _buildTextField(
+                _toController, TextInputType.emailAddress, 'Enter to'),
+            _buildTextField(
+                _ccController, TextInputType.emailAddress, 'Enter cc'),
+            _buildTextField(
+                _bccController, TextInputType.emailAddress, 'Enter bcc'),
+            _buildTextField(
+                _subjectController, TextInputType.text, 'Enter subject'),
+            _buildTextField(_bodyController, TextInputType.text, 'Enter body'),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                  onPressed: _launchEmail, child: Text('Launch Email')),
+            )
+          ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller,
+      TextInputType inputType, String hintText) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextField(
+        controller: controller,
+        keyboardType: inputType,
+        decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black54),
+            ),
+            hintText: hintText),
       ),
     );
   }

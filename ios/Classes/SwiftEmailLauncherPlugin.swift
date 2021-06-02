@@ -17,6 +17,7 @@ public class SwiftEmailLauncherPlugin: NSObject, FlutterPlugin {
             result(FlutterMethodNotImplemented)
         }
     }
+    
     private func launchEmail(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         guard let email = parseArgs(call, result: result) else {return}
         guard let viewController = UIApplication.shared.keyWindow?.rootViewController else {
@@ -36,7 +37,7 @@ public class SwiftEmailLauncherPlugin: NSObject, FlutterPlugin {
                 mailComposeVC.setMessageBody(body, isHTML: false)
             }
             viewController.present(mailComposeVC, animated: true, completion: {result(nil)})
-            
+            result(true)
         } else {
             result(FlutterError.init(code: "-1", message: "No email clients found!", details: nil))
         }

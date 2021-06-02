@@ -4,12 +4,12 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.annotation.NonNull
+
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
-import io.flutter.plugin.common.PluginRegistry.Registrar
 
 private const val TO = "to"
 private const val CC = "cc"
@@ -18,22 +18,16 @@ private const val SUBJECT = "subject"
 private const val BODY = "body"
 
 /** EmailLauncherPlugin */
-public class EmailLauncherPlugin : FlutterPlugin, MethodCallHandler {
+class EmailLauncherPlugin : FlutterPlugin, MethodCallHandler {
+
+    private lateinit var channel: MethodChannel
 
     private var context: Context? = null
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        val channel = MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "email_launcher")
+        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "email_launcher")
         channel.setMethodCallHandler(this)
         context = flutterPluginBinding.applicationContext
-    }
-
-    companion object {
-        @JvmStatic
-        fun registerWith(registrar: Registrar) {
-            val channel = MethodChannel(registrar.messenger(), "email_launcher")
-            channel.setMethodCallHandler(EmailLauncherPlugin())
-        }
     }
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
@@ -45,6 +39,7 @@ public class EmailLauncherPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+        channel.setMethodCallHandler(null)
     }
 
     private fun launchEmail(call: MethodCall, result: Result) {

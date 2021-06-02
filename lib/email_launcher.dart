@@ -5,8 +5,9 @@ import 'package:flutter/services.dart';
 class EmailLauncher {
   static const MethodChannel _channel = const MethodChannel('email_launcher');
 
-  static Future<void> launch(Email email) {
-    return _channel.invokeMethod('launch', email.toJson());
+  static Future<bool> launch(Email email) async {
+    final bool result = await _channel.invokeMethod('launch', email.toJson());
+    return result;
   }
 }
 
